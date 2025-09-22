@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+
+// Assuming your image assets are correctly placed in the 'src/assets' folder
 import snapImage from '../assets/SNAP.jpg';
 import uploadImage from '../assets/UPLOAD.jpeg';
 import aiCheckImage from '../assets/AICHECK.jpeg';
@@ -30,49 +32,44 @@ const steps = [
 const HowItWorksScroller = () => {
   const [activeStep, setActiveStep] = useState(0);
   const containerRef = useRef(null);
-  const timeoutRef = useRef(null); // Use ref for timeout to persist across re-renders
 
   useEffect(() => {
     const handleScroll = () => {
-      // Clear any existing timeout to reset the debounce timer
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      const container = containerRef.current;
+      if (!container) return;
+
+      const { top, height } = container.getBoundingClientRect();
+      const scrollableHeight = height - window.innerHeight;
+
+      // Exit if the component is not in the viewport
+      if (top > window.innerHeight || top < -height) {
+        return;
       }
 
-      // Set a new timeout. The logic inside will only run after the user has stopped scrolling for 100ms.
-      timeoutRef.current = setTimeout(() => {
-        const container = containerRef.current;
-        if (!container) return;
+      // Calculate scroll progress from 0 to 1
+      const progress = Math.max(0, Math.min(1, -top / scrollableHeight));
+      
+      // Determine the new step, snapping to the nearest one
+      const newStep = Math.round(progress * (steps.length - 1));
 
-        const { top, height } = container.getBoundingClientRect();
-        const scrollableHeight = height - window.innerHeight;
-        
-        // Exit if we're not within the component's scrollable area
-        if (top > window.innerHeight || top < -height) {
-            return;
+      // Use the functional update to avoid stale state issues
+      // This ensures we always have the most recent `prevStep` to compare against
+      setActiveStep(prevStep => {
+        if (newStep !== prevStep) {
+          return newStep;
         }
-
-        const progress = Math.max(0, Math.min(1, -top / scrollableHeight));
-        
-        // Use Math.round to snap to the NEAREST step, creating the "hard scroll" effect
-        const newStep = Math.round(progress * (steps.length - 1));
-
-        if (newStep !== activeStep) {
-          setActiveStep(newStep);
-        }
-      }, 50); // A short debounce period
+        return prevStep; // No state change needed
+      });
     };
 
+    // Add the event listener once when the component mounts
     window.addEventListener('scroll', handleScroll, { passive: true });
     
-    // Cleanup function
+    // Clean up the listener when the component unmounts
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
     };
-  }, [activeStep]); // Keep activeStep dependency to ensure the comparison is always with the latest state
+  }, []); // <-- Empty dependency array ensures this effect runs only once
 
   return (
     <div ref={containerRef} className="relative h-[250vh] bg-white py-16">
@@ -80,6 +77,8 @@ const HowItWorksScroller = () => {
         <div className="container mx-auto px-6">
           <h2 className="text-3xl font-bold text-gray-800 mb-12 text-center">How It Works</h2>
           <div className="flex items-center gap-16">
+            
+            {/* Left side: The text steps */}
             <div className="w-1/2 flex justify-end">
               <div className="relative">
                 <div className="absolute left-6 top-0 h-full w-px border-l-2 border-dotted border-gray-300"></div>
@@ -118,6 +117,7 @@ const HowItWorksScroller = () => {
               </div>
             </div>
 
+            {/* Right side: The fading images */}
             <div className="w-1/2 h-[450px] relative flex items-center justify-start">
               {steps.map((step, index) => (
                 <img
@@ -130,6 +130,7 @@ const HowItWorksScroller = () => {
                 />
               ))}
             </div>
+            
           </div>
         </div>
       </div>
@@ -138,4 +139,3 @@ const HowItWorksScroller = () => {
 };
 
 export default HowItWorksScroller;
-
