@@ -1,5 +1,6 @@
 import React from 'react';
-import LossBarGraph from '../components/LossBarGraph'; // Import the new component
+import LossBarGraph from '../components/LossBarGraph';
+import StepScroll from '../components/StepScroll' // Import the new component
 
 const LandingPage = () => {
   return (
@@ -36,6 +37,9 @@ const LandingPage = () => {
       {/* --- New: Bar Graph Section --- */}
       <div className="w-full">
         <LossBarGraph />
+      </div>
+         <div className="w-full">
+        <StepScroll />
       </div>
       {/* --- End New --- */}
 
