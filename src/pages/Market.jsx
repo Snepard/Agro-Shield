@@ -24,6 +24,8 @@ const App = () => {
     const [searchTerm, setSearchTerm] = useState('');
     // State for category filtering
     const [selectedCategory, setSelectedCategory] = useState('all');
+    // State for budget filtering
+    const [budget, setBudget] = useState(2000);
     // State for message modal
     const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
     const [message, setMessage] = useState('');
@@ -31,12 +33,15 @@ const App = () => {
     const [isCartModalOpen, setIsCartModalOpen] = useState(false);
     // State for wishlist view modal
     const [isWishlistModalOpen, setIsWishlistModalOpen] = useState(false);
+    // State for mobile sidebar
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-    // Filter products based on search term and category
+    // Filter products based on search term, category, and budget
     const filteredProducts = productsData.filter(product => {
         const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-        return matchesSearch && matchesCategory;
+        const matchesBudget = product.price <= budget;
+        return matchesSearch && matchesCategory && matchesBudget;
     });
 
     // Function to add a product to the cart
@@ -114,139 +119,110 @@ const App = () => {
 
     return (
         <div className="bg-[#F0FFF0] text-[#333] font-sans leading-relaxed min-h-screen flex flex-col">
-            {/* Top Banner */}
-            <div className="bg-[#145A32] text-white text-xs sm:text-sm text-center py-2">
-                <p>Extra Discount On Online Payment</p>
-            </div>
-
-            {/* Main Header */}
-            <header className="bg-gradient-to-r from-[#228B22] to-[#3CB371] text-white p-4 flex flex-col lg:flex-row justify-between items-center shadow-lg">
-                <div className="flex items-center space-x-4 mb-4 lg:mb-0">
-                    <span className="text-3xl font-bold">AgriBegri</span>
-                    <a href="#" className="flex items-center space-x-2 text-white hover:text-gray-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 3a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V3z" /><path d="M10 6a1 1 0 011 1v4a1 1 0 01-2 0V7a1 1 0 011-1z" /><path d="M10 13a1 1 0 011 1v1a1 1 0 01-2 0v-1a1 1 0 011-1z" /></svg>
-                        <span className="hidden sm:inline">Get on Google Play</span>
-                    </a>
-                </div>
-                <div className="flex-grow max-w-xl w-full mx-0 sm:mx-8 mb-4 lg:mb-0">
-                    <div className="flex rounded-full overflow-hidden shadow-md">
-                        <input
-                            type="text"
-                            placeholder="Search Products, Categories or Brands"
-                            className="w-full p-3 border-none text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#145A32]"
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                        <button className="bg-[#145A32] text-white px-5 py-3 transition-colors hover:bg-[#0E4324]">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
-                        </button>
+        
+            {/* Main Content Area */}
+            <div className="flex flex-grow">
+                {/* Sidebar */}
+                <aside className={`bg-white p-6 shadow-xl transform transition-transform duration-300 fixed lg:static inset-y-0 z-40 w-64 lg:w-72 overflow-y-auto ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+                    <div className="flex justify-between items-center mb-6 lg:hidden">
+                        <h3 className="text-xl font-bold text-[#145A32]">Filters</h3>
+                        <button onClick={() => setIsSidebarOpen(false)} className="text-xl font-bold">X</button>
                     </div>
-                </div>
-                <div className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4 text-sm">
-                    <span className="hidden lg:inline">Missed call to order: **7050606162**</span>
-                    <a href="#" className="flex items-center space-x-1 hover:text-gray-200">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-7-4a1 1 0 112 0 1 1 0 01-2 0z" clipRule="evenodd" /></svg>
-                        <span>Ask Agro Experts</span>
-                    </a>
-                    <a href="#" className="hover:text-gray-200">Login</a>
-                </div>
-            </header>
 
-            {/* Navigation / Filter Bar */}
-            <nav className="bg-[#3CB371] text-white p-3 shadow-md">
-                <div className="container mx-auto max-w-7xl flex flex-wrap justify-center sm:justify-between items-center space-x-4 sm:space-x-8">
-                    {['all', 'seeds', 'pesticides', 'tools', 'best sellers', 'organic farming'].map(category => (
-                        <button
-                            key={category}
-                            onClick={() => setSelectedCategory(category)}
-                            className={`px-4 py-2 rounded-md font-medium transition-all duration-300 whitespace-nowrap ${
-                                selectedCategory === category
-                                    ? 'bg-[#145A32] text-white shadow-lg'
-                                    : 'bg-transparent text-white border-transparent hover:bg-[#329A5F]'
-                            }`}
-                        >
-                            {category.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-                        </button>
-                    ))}
-                    <div className="flex items-center space-x-2">
-                        <div
-                            className="relative text-xl cursor-pointer transition-transform duration-300 hover:scale-110"
-                            onClick={showCartModal}
-                        >
-                            🛒
-                            <span className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-500 text-white rounded-full px-1.5 py-0.5 text-xs font-bold leading-none">
-                                {cartItems.length}
-                            </span>
-                        </div>
-                        <span className="font-bold">CART</span>
-                    </div>
-                </div>
-            </nav>
-
-            {/* Main Content */}
-            <main className="container mx-auto p-8 max-w-7xl flex-grow">
-                <div className="flex flex-wrap items-center justify-between mb-6">
-                    <h2 className="text-3xl font-semibold text-[#145A32] mt-0">
-                        Popular Products
-                    </h2>
-                    {/* Add a placeholder for the side arrows from the image */}
-                    <div className="flex space-x-2">
-                        <button className="bg-gray-200 text-gray-600 rounded-full p-2 hover:bg-gray-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                        </button>
-                        <button className="bg-gray-200 text-gray-600 rounded-full p-2 hover:bg-gray-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                        </button>
-                    </div>
-                </div>
-
-                {/* Product Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                    {filteredProducts.length > 0 ? (
-                        filteredProducts.map(product => (
-                            <div
-                                key={product.id}
-                                className="bg-white rounded-xl p-6 text-center transition-transform duration-300 hover:translate-y-[-8px] shadow-lg hover:shadow-2xl relative"
+                    <h3 className="text-xl font-bold text-[#145A32] mb-4">Categories</h3>
+                    <div className="flex flex-col space-y-2 mb-6">
+                        {['all', 'seeds', 'pesticides', 'tools', 'fertilizers', 'best sellers', 'organic farming'].map(category => (
+                            <button
+                                key={category}
+                                onClick={() => setSelectedCategory(category)}
+                                className={`text-left px-4 py-2 rounded-md font-medium transition-colors duration-300 ${
+                                    selectedCategory === category
+                                        ? 'bg-[#3CB371] text-white shadow-lg'
+                                        : 'bg-transparent text-[#145A32] hover:bg-[#EAF7EC]'
+                                }`}
                             >
-                                <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold rounded-md px-2 py-1">
-                                    {product.discount}%
+                                {category.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                            </button>
+                        ))}
+                    </div>
+
+                    <h3 className="text-xl font-bold text-[#145A32] mb-4">Budget</h3>
+                    <div className="p-4 bg-[#EAF7EC] rounded-lg">
+                        <input
+                            type="range"
+                            min="0"
+                            max="2000"
+                            value={budget}
+                            onChange={(e) => setBudget(e.target.value)}
+                            className="w-full h-2 bg-[#3CB371] rounded-lg appearance-none cursor-pointer"
+                        />
+                        <p className="text-center font-bold text-[#145A32] mt-2">Max Price: ₹{budget}</p>
+                    </div>
+                </aside>
+                
+                {/* Main Product Grid */}
+                <main className="flex-grow container mx-auto p-8 max-w-7xl">
+                    <div className="flex flex-wrap items-center justify-between mb-6">
+                        <h2 className="text-3xl font-semibold text-[#145A32] mt-0">
+                            Popular Products
+                        </h2>
+                        {/* Add a placeholder for the side arrows from the image */}
+                        <div className="flex space-x-2">
+                            <button className="bg-gray-200 text-gray-600 rounded-full p-2 hover:bg-gray-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                            </button>
+                            <button className="bg-gray-200 text-gray-600 rounded-full p-2 hover:bg-gray-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                        {filteredProducts.length > 0 ? (
+                            filteredProducts.map(product => (
+                                <div
+                                    key={product.id}
+                                    className="bg-white rounded-xl p-6 text-center transition-transform duration-300 hover:translate-y-[-8px] shadow-lg hover:shadow-2xl relative"
+                                >
+                                    <div className="absolute top-4 right-4 bg-red-500 text-white text-xs font-bold rounded-md px-2 py-1">
+                                        {product.discount}%
+                                    </div>
+                                    <button
+                                        className="absolute top-4 left-4 text-gray-400 hover:text-red-500 transition-colors"
+                                        onClick={() => addToWishlist(product)}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                    <img
+                                        src={product.image}
+                                        alt={product.name}
+                                        className="w-full h-48 object-contain rounded-lg mb-4"
+                                    />
+                                    <h3 className="text-xl font-semibold text-[#228B22] mb-2">{product.name}</h3>
+                                    <p className="text-sm text-gray-500 line-through">₹{product.originalPrice.toFixed(2)}</p>
+                                    <p className="text-2xl font-bold text-[#145A32] mb-4">₹{product.price.toFixed(2)}</p>
+                                    <button
+                                        className="bg-blue-600 text-white py-3 px-6 rounded-md text-lg font-medium transition-transform duration-300 hover:scale-105 hover:bg-blue-700 shadow-md w-full"
+                                        onClick={() => addToCart(product)}
+                                    >
+                                        BUY NOW
+                                    </button>
                                 </div>
-                                <button
-                                    className="absolute top-4 left-4 text-gray-400 hover:text-red-500 transition-colors"
-                                    onClick={() => addToWishlist(product)}
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-                                    </svg>
-                                </button>
-                                <img
-                                    src={product.image}
-                                    alt={product.name}
-                                    className="w-full h-48 object-contain rounded-lg mb-4"
-                                />
-                                <h3 className="text-xl font-semibold text-[#228B22] mb-2">{product.name}</h3>
-                                <p className="text-sm text-gray-500 line-through">₹{product.originalPrice.toFixed(2)}</p>
-                                <p className="text-2xl font-bold text-[#145A32] mb-4">₹{product.price.toFixed(2)}</p>
-                                <button
-                                    className="bg-blue-600 text-white py-3 px-6 rounded-md text-lg font-medium transition-transform duration-300 hover:scale-105 hover:bg-blue-700 shadow-md w-full"
-                                    onClick={() => addToCart(product)}
-                                >
-                                    BUY NOW
-                                </button>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-center col-span-full text-gray-600 text-lg">
-                            No products found matching your search.
-                        </p>
-                    )}
-                </div>
-            </main>
+                            ))
+                        ) : (
+                            <p className="text-center col-span-full text-gray-600 text-lg">
+                                No products found matching your search.
+                            </p>
+                        )}
+                    </div>
+                </main>
+            </div>
 
             {/* Footer */}
             <footer className="text-center p-6 bg-[#145A32] text-white mt-8">
-                <p>&copy; 2025 Agro-Mart. All rights reserved.</p>
+                <p>&copy; 2025 Agro-Sheild. All rights reserved.</p>
             </footer>
 
             {/* Message Modal */}
