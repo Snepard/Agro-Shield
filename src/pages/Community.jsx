@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 // Step 1: Import Link and NavLink from react-router-dom
 import { Link, NavLink } from "react-router-dom";
 
@@ -130,17 +130,20 @@ const initialPosts = [
 
 // --- COMPONENTS ---
 
-// Custom hook for a retro typing animation
+// Custom hook for a retro typing animation (FIXED)
 const useTypingEffect = (text, speed = 100) => {
   const [displayedText, setDisplayedText] = useState("");
+  const index = useRef(0);
 
   useEffect(() => {
-    let i = 0;
-    setDisplayedText(""); // Reset on text change
+    // Reset state and refs on text change
+    index.current = 0;
+    setDisplayedText("");
+
     const typingInterval = setInterval(() => {
-      if (i < text.length) {
-        setDisplayedText((prev) => prev + text.charAt(i));
-        i++;
+      if (index.current < text.length) {
+        setDisplayedText((prev) => prev + text.charAt(index.current));
+        index.current += 1;
       } else {
         clearInterval(typingInterval);
       }
@@ -337,7 +340,7 @@ export default function CommunityPage() {
   const [posts, setPosts] = useState(initialPosts);
   const [activeSort, setActiveSort] = useState("Hot");
   const [visibleComments, setVisibleComments] = useState(null);
-  const headerText = useTypingEffect("AgroShield Community Hub");
+  const headerText = useTypingEffect("AAgroShield Community Hub");
 
   // Function to handle sorting logic
   const handleSort = (sortType) => {
@@ -387,32 +390,32 @@ export default function CommunityPage() {
       {/* Injecting styles directly for custom fonts and animations */}
       <style>
         {`
-                    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-                    body {
-                        background-color: #000;
-                    }
-                    .font-pixel {
-                        font-family: 'VT323', monospace;
-                    }
-                    .crt-background {
-                        background-color: #000;
-                        background-image: linear-gradient(rgba(0, 255, 0, 0.05) 50%, transparent 50%);
-                        background-size: 100% 4px;
-                    }
-                    @keyframes flicker {
-                        0%, 100% { opacity: 1; text-shadow: 0 0 2px #00ff00, 0 0 4px #00ff00; }
-                        50% { opacity: 0.9; text-shadow: 0 0 2px #00ff00; }
-                    }
-                    .animate-flicker {
-                        animation: flicker 3s linear infinite;
-                    }
-                    .blinking-cursor::after {
-                        content: '_';
-                        animation: blink 1s step-end infinite;
-                    }
-                    @keyframes blink {
-                        50% { opacity: 0; }
-                    }
+                  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+                  body {
+                      background-color: #000;
+                  }
+                  .font-pixel {
+                      font-family: 'VT323', monospace;
+                  }
+                  .crt-background {
+                      background-color: #000;
+                      background-image: linear-gradient(rgba(0, 255, 0, 0.05) 50%, transparent 50%);
+                      background-size: 100% 4px;
+                  }
+                  @keyframes flicker {
+                      0%, 100% { opacity: 1; text-shadow: 0 0 2px #00ff00, 0 0 4px #00ff00; }
+                      50% { opacity: 0.9; text-shadow: 0 0 2px #00ff00; }
+                  }
+                  .animate-flicker {
+                      animation: flicker 3s linear infinite;
+                  }
+                  .blinking-cursor::after {
+                      content: '_';
+                      animation: blink 1s step-end infinite;
+                  }
+                  @keyframes blink {
+                      50% { opacity: 0; }
+                  }
                 `}
       </style>
 
@@ -490,3 +493,4 @@ export default function CommunityPage() {
     </>
   );
 }
+
