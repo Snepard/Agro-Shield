@@ -1,21 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
+import snapImage from '../assets/SNAP.jpg';
+import uploadImage from '../assets/UPLOAD.jpeg';
+import aiCheckImage from '../assets/AICHECK.jpeg';
 
-// Define the content for each step (no changes here)
+// Define the content for each step
 const steps = [
   {
     title: 'Snap a Photo',
     description: 'Take a clear picture of the affected crop.',
-    image: 'https://images.unsplash.com/photo-1587883988358-69a3857fb74e?q=80&w=2070&auto-format&fit-crop',
+    image: snapImage
   },
   {
     title: 'Upload to Agro Shield',
     description: 'Use our simple interface to upload your image.',
-    image: 'https://images.unsplash.com/photo-1614332287897-cdc485fa562d?q=80&w=2070&auto-format&fit=crop',
+    image: uploadImage
   },
   {
     title: 'AI-Powered Analysis',
     description: 'Our advanced AI model analyzes the image.',
-    image: 'https://images.unsplash.com/photo-1620712943543-2858200f7426?q=80&w=2070&auto-format&fit=crop',
+    image: aiCheckImage
   },
   {
     title: 'Receive Your Diagnosis',
@@ -58,20 +61,16 @@ const HowItWorksScroller = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [activeStep]); // Keep activeStep dependency to ensure the comparison is always with the latest state
+  }, [activeStep]);
 
   return (
-    // Component height and padding reduced for a more compact feel
     <div ref={containerRef} className="relative h-[250vh] bg-white py-16">
       <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
         <div className="container mx-auto px-6">
-          {/* Title is now outside the two-column flex container for proper alignment */}
           <h2 className="text-3xl font-bold text-gray-800 mb-12 text-center">How It Works</h2>
           <div className="flex items-center gap-16">
-            {/* Left Side: Scaled down vertical steps design */}
             <div className="w-1/2 flex justify-end">
               <div className="relative">
-                {/* Vertical dotted line, positioned for new circle size */}
                 <div className="absolute left-6 top-0 h-full w-px border-l-2 border-dotted border-gray-300"></div>
                 
                 <div className="space-y-12">
@@ -81,7 +80,6 @@ const HowItWorksScroller = () => {
 
                     return (
                       <div key={index} className="relative flex items-center transition-transform duration-300 transform hover:scale-105">
-                        {/* Circle with number - smaller size */}
                         <div
                           className={`z-10 flex h-12 w-12 items-center justify-center rounded-full transition-all duration-500 ease-in-out transform
                             ${isActive ? 'bg-green-600 ring-8 ring-green-200/50 scale-110' : ''}
@@ -94,7 +92,6 @@ const HowItWorksScroller = () => {
                           </span>
                         </div>
                         
-                        {/* Text content - smaller but still bold */}
                         <div className="ml-8">
                           <h3 className={`text-xl font-bold transition-colors duration-300 ${isActive ? 'text-gray-800' : 'text-gray-400'}`}>
                             {step.title}
@@ -110,7 +107,6 @@ const HowItWorksScroller = () => {
               </div>
             </div>
 
-            {/* Right Side: Images with cross-fade effect (made smaller) */}
             <div className="w-1/2 h-[450px] relative flex items-center justify-start">
               {steps.map((step, index) => (
                 <img
