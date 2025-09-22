@@ -1,5 +1,8 @@
 import React from 'react';
-import LossBarGraph from '../components/LossBarGraph'; // Import the new component
+import LossBarGraph from '../components/LossBarGraph';
+import StepScroll from '../components/StepScroll' 
+import landingImage from '../assets/landing.png';
+// Import the new component
 
 const LandingPage = () => {
   return (
@@ -21,14 +24,14 @@ const LandingPage = () => {
           </div>
 
           {/* Right Column: Image */}
-          <div className="flex justify-center">
-            
-            <img 
-              src="https://images.unsplash.com/photo-1622383798335-326a0958434f?q=80&w=2070&auto=format&fit=crop" 
-              alt="Healthy crop field" 
-              className="rounded-2xl shadow-2xl w-full max-w-md object-cover"
-            />
-          </div>
+   {/* Right Column: Image */}
+<div className="flex justify-center">
+  <img 
+    src={landingImage} // Use the imported variable here
+    alt="Healthy crop field" 
+
+  />
+</div>
 
         </div>
       </div>
@@ -36,6 +39,9 @@ const LandingPage = () => {
       {/* --- New: Bar Graph Section --- */}
       <div className="w-full">
         <LossBarGraph />
+      </div>
+         <div className="w-full">
+        <StepScroll />
       </div>
       {/* --- End New --- */}
 
