@@ -242,7 +242,7 @@ const DiagnosisPage = () => {
         {activeDiagnosisSection && (
           <div className="mt-10 flex flex-col lg:flex-row gap-8">
             <div 
-              className="w-full lg:w-1/3 flex flex-col items-center p-6 bg-white rounded-xl shadow-md border border-gray-100"
+              className="w-full lg:w-1/2 flex flex-col items-center p-6 bg-white rounded-xl shadow-md border border-gray-100"
               style={{ perspective: '1000px' }}
             >
                 <h2 className="text-xl font-bold text-gray-800 mb-4">Diagnosis Details</h2>
