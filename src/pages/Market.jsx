@@ -220,10 +220,7 @@ const App = () => {
                 </main>
             </div>
 
-            {/* Footer */}
-            <footer className="text-center p-6 bg-[#145A32] text-white mt-8">
-                <p>&copy; 2025 Agro-Sheild. All rights reserved.</p>
-            </footer>
+            
 
             {/* Message Modal */}
             {isMessageModalOpen && (
