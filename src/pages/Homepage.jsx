@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import LossBarGraph from '../components/LossBarGraph';
-import StepScroll from '../components/StepScroll'; // You can keep this or replace with the new HowItWorksSection
+import StepScroll from '../components/StepScroll';
 import landingImage from '../assets/landing.png';
 import Footer from '../components/Footer';
 import Review from '../components/ReviewSection';
@@ -25,8 +25,9 @@ const FeatureIcon3 = () => (
 // --- New Components ---
 
 const HeroSection = () => (
-  <div className="relative flex items-center justify-center min-h-screen bg-gradient-to-br from-green-50 via-green-100/50 to-gray-50 overflow-hidden">
-    <div className="container mx-auto px-6 py-12 z-10">
+  // MODIFIED: Replaced `min-h-screen` with padding `pt-40 pb-20` to remove the large top margin/space.
+  <div className="relative flex items-center justify-center pt-40 pb-20 bg-gradient-to-br from-green-50 via-green-100/50 to-gray-50 overflow-hidden">
+    <div className="container mx-auto px-6 z-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         <div className="text-center md:text-left">
           <h1 className="text-4xl md:text-6xl font-extrabold text-gray-800 mb-4 leading-tight">
@@ -146,19 +147,6 @@ const FAQSection = () => {
     );
 };
 
-const CTASection = () => (
-    <section className="bg-green-600">
-        <div className="container mx-auto px-6 py-20 text-center">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-white">Ready to Protect Your Harvest?</h2>
-            <p className="mt-4 text-lg text-green-100 max-w-2xl mx-auto">Join thousands of farmers who trust Agro Shield. Get started today for free and see the difference technology can make.</p>
-            <button className="mt-8 bg-white text-green-600 font-bold py-3 px-8 rounded-full text-lg hover:bg-green-50 transition-transform transform hover:scale-105 duration-300">
-                Sign Up Now
-            </button>
-        </div>
-    </section>
-);
-
-
 // --- Main Landing Page Component ---
 
 const LandingPage = () => {
@@ -183,7 +171,7 @@ const LandingPage = () => {
       </section>
       
       <FAQSection />
-      <CTASection />
+      {/* MODIFIED: The CTASection component has been removed from here. */}
       <Footer />
     </div>
   );
