@@ -1,8 +1,9 @@
 import React from 'react';
+import LossBarGraph from '../components/LossBarGraph'; // Import the new component
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-green-50/50">
+    <div className="min-h-screen flex flex-col items-center justify-start bg-green-50/50 pt-24"> {/* Added pt-24 to give space for fixed navbar */}
       <div className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           
@@ -31,6 +32,13 @@ const LandingPage = () => {
 
         </div>
       </div>
+
+      {/* --- New: Bar Graph Section --- */}
+      <div className="w-full">
+        <LossBarGraph />
+      </div>
+      {/* --- End New --- */}
+
     </div>
   );
 };
