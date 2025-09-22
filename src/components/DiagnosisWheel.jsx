@@ -78,8 +78,12 @@ const DiagnosisWheel = ({ onSectionClick, activeSection }) => {
         const clipPathValue = `polygon(${points.join(', ')})`;
         
         const midAngle = startAngle + anglePerSection / 2;
-        const textX = Math.cos((midAngle - 90) * Math.PI / 180) * (radius * 0.6);
-        const textY = Math.sin((midAngle - 90) * Math.PI / 180) * (radius * 0.6);
+
+        // --- MODIFIED LINES ---
+        // Increased the multiplier from 0.6 to 0.65 to push the content further from the center.
+        const textX = Math.cos((midAngle - 90) * Math.PI / 180) * (radius * 0.65);
+        const textY = Math.sin((midAngle - 90) * Math.PI / 180) * (radius * 0.65);
+        // --- END OF MODIFIED LINES ---
 
         return (
           <motion.div
@@ -97,11 +101,12 @@ const DiagnosisWheel = ({ onSectionClick, activeSection }) => {
             animate={activeSection === section.id ? "active" : "animate"}
             whileHover="hover"
           >
-            {/* --- MODIFIED LINE --- */}
             <div
-              className="absolute flex flex-col items-center text-center p-2 w-20 md:w-24" // Added w-20 md:w-24 to constrain width and force text wrapping
+              className="absolute flex flex-col items-center text-center p-2 w-20 md:w-24"
               style={{
-                transform: `translate(${textX}px, ${textY}px)`,
+                top: '50%',
+                left: '50%',
+                transform: `translate(${textX}px, ${textY}px) translate(-50%, -50%)`,
               }}
             >
               <section.icon className={`text-3xl md:text-4xl mb-1 ${section.iconColor}`} />
