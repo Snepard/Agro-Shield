@@ -2,6 +2,8 @@ import React from 'react';
 import LossBarGraph from '../components/LossBarGraph';
 import StepScroll from '../components/StepScroll' 
 import landingImage from '../assets/landing.png';
+import Footer from '../components/Footer'
+import Review from '../components/ReviewSection'
 // Import the new component
 
 const LandingPage = () => {
@@ -42,6 +44,13 @@ const LandingPage = () => {
       </div>
          <div className="w-full">
         <StepScroll />
+      </div>
+            <div className="w-full">
+        <Review />
+      </div>
+
+            <div className="w-full">
+        <Footer />
       </div>
       {/* --- End New --- */}
 
