@@ -2,13 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart, Search, X, ChevronDown, Filter, Star, CheckSquare, Square, LoaderCircle } from 'lucide-react';
 
-import S from '../assets/landing.png';
 
-import landingImage from '../assets/landing.png';
-
-import landingImage from '../assets/landing.png';
-
-import landingImage from '../assets/landing.png';
 
 // --- IMPORTANT: ADD YOUR PEXELS API KEY HERE ---
 // Get a free key from https://www.pexels.com/api/
