@@ -23,7 +23,7 @@ const Navbar = () => {
   const navLinks = [
     { name: "Home", path: "/" },
     { name: "Diagnose Crop", path: "/diagnosis" },
-    { name: "Market", path: "/market" }, // Added this line
+    { name: "Market", path: "/market" },
     { name: "Community", path: "/community" },
   ];
   // --- END OF MODIFIED CODE SECTION ---
