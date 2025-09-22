@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import HomePage from './pages/Homepage';
 import DiagnosisPage from './pages/Diagnosis';
 import Market from './pages/Market'
+import Community from './pages/Community'
 
 
 function App() {
@@ -15,6 +16,8 @@ function App() {
         <br/><br/><br/><br/>
         <Routes>
           <Route path="/" element={<HomePage />} />
+                    <Route path="/community" element={<Community />} />
+
           <Route path="/diagnosis" element={<DiagnosisPage />} />
                     <Route path="/market" element={<Market />} />
 
