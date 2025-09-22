@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// Define the content for each step (no changes here)
+// Define the content for each step
 const steps = [
   {
     title: 'Snap a Photo',
@@ -27,29 +27,37 @@ const steps = [
 const HowItWorksScroller = () => {
   const [activeStep, setActiveStep] = useState(0);
   const containerRef = useRef(null);
+  const timeoutRef = useRef(null); // Use ref for timeout to persist across re-renders
 
   useEffect(() => {
     const handleScroll = () => {
-      const container = containerRef.current;
-      if (!container) return;
-
-      const { top, height } = container.getBoundingClientRect();
-      const scrollableHeight = height - window.innerHeight;
-
-      // Exit if we're not within the component's scrollable area
-      if (top > window.innerHeight || top < -height) {
-        return;
+      // Clear any existing timeout to reset the debounce timer
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
       }
 
-      const progress = Math.max(0, Math.min(1, -top / scrollableHeight));
-      
-      // Use Math.round to snap to the NEAREST step
-      const newStep = Math.round(progress * (steps.length - 1));
+      // Set a new timeout. The logic inside will only run after the user has stopped scrolling for 100ms.
+      timeoutRef.current = setTimeout(() => {
+        const container = containerRef.current;
+        if (!container) return;
 
-      // Update state only if the step has changed
-      if (newStep !== activeStep) {
-        setActiveStep(newStep);
-      }
+        const { top, height } = container.getBoundingClientRect();
+        const scrollableHeight = height - window.innerHeight;
+        
+        // Exit if we're not within the component's scrollable area
+        if (top > window.innerHeight || top < -height) {
+            return;
+        }
+
+        const progress = Math.max(0, Math.min(1, -top / scrollableHeight));
+        
+        // Use Math.round to snap to the NEAREST step, creating the "hard scroll" effect
+        const newStep = Math.round(progress * (steps.length - 1));
+
+        if (newStep !== activeStep) {
+          setActiveStep(newStep);
+        }
+      }, 50); // A short debounce period
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -57,8 +65,11 @@ const HowItWorksScroller = () => {
     // Cleanup function
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, [activeStep]); // Keep activeStep dependency to ensure the comparison is always with the latest state
+  }, [activeStep]); // Rerun effect if activeStep changes to have the latest value in closure
 
   return (
     // Component height and padding reduced for a more compact feel
@@ -131,3 +142,4 @@ const HowItWorksScroller = () => {
 };
 
 export default HowItWorksScroller;
+
