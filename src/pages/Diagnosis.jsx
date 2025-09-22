@@ -37,7 +37,7 @@ const DiagnosisPage = () => {
     <div className="bg-green-50 min-h-screen flex flex-col items-center p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <div className="w-full max-w-4xl text-center mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-green-900">AgroShield Crop Diagnosis</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold text-green-900">Crop Diagnosis</h1>
         <p className="text-gray-600 mt-2">Upload a picture of the affected crop to get an instant analysis.</p>
       </div>
 

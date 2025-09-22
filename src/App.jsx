@@ -12,7 +12,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/diagnosis" elemen={<DiagnosisPage />} />
+          <Route path="/diagnosis" element={<DiagnosisPage />} />
         </Routes>
       </div>
     </BrowserRouter>
