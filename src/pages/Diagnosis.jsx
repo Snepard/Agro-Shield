@@ -1,116 +1,287 @@
+// src/pages/DiagnosisPage.jsx
 import React, { useState } from 'react';
-import { FiUploadCloud } from 'react-icons/fi'; // Using a popular icon library for a better UI
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  FiUploadCloud,
+  FiShield,
+  FiSun,
+  FiThermometer,
+  FiDroplet,
+  FiCheckCircle,
+  FiAlertTriangle,
+  FiInfo,
+  FiTarget,
+  FiActivity,
+  FiGlobe,
+  FiTool
+} from 'react-icons/fi';
+import DiagnosisWheel from '../components/DiagnosisWheel';
 
-// Main component for the Diagnosis Page
 const DiagnosisPage = () => {
-  // State to store the URL of the image preview
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
-  // State to store the file object itself
-  const [imageFile, setImageFile] = useState(null);
-  
-  // Mock data for display after image upload
+  const [activeDiagnosisSection, setActiveDiagnosisSection] = useState(null);
+
+  // --- Mock Data (unchanged) ---
   const cropData = {
     prediction: 'Tomato - Early Blight',
-    confidenceScore: '92%',
-    soilMoisture: '45%',
-    temperature: '28°C',
-    humidity: '65%',
-    recommendation: 'Apply a copper-based fungicide. Remove and destroy infected leaves to prevent further spread. Ensure proper plant spacing for better air circulation.',
+    diseaseCode: 'TOM_EB_01',
+    confidenceScore: 92,
+    description: 'A common fungal disease in tomatoes caused by Alternaria solani, characterized by dark, concentric-ringed spots on lower leaves. It typically starts on older leaves and progresses upwards.',
+    symptoms: [
+        'Small, dark, concentric spots on older leaves, often with a yellow halo.',
+        'Spots can enlarge and merge, causing leaves to turn yellow and drop.',
+        'Lesions may appear on stems and fruits, particularly at the stem end.',
+        'Severely infected plants may defoliate, leading to sunscald on fruits and reduced yield.'
+    ],
+    environmentalFactors: {
+      soilMoisture: '45% (Optimal)',
+      temperature: '28°C (High Risk)',
+      humidity: '65% (Favorable for fungus)',
+      sunlight: '6-8 hours/day (Adequate)',
+      ph: '6.0-6.8 (Ideal)',
+    },
+    recommendedActions: [
+      'Remove and destroy infected lower leaves immediately.',
+      'Apply a copper-based or chlorothalonil fungicide, following label instructions.',
+      'Ensure proper plant spacing to improve air circulation (e.g., 2-3 feet between plants).',
+      'Avoid overhead watering; use drip irrigation to keep foliage dry.',
+      'Sanitize tools after use in infected areas.',
+    ],
+    preventiveMeasures: [
+      'Practice crop rotation; avoid planting tomatoes or potatoes in the same spot for at least two years.',
+      'Use disease-resistant tomato varieties if available.',
+      'Mulch around the base of plants to reduce soil splash onto leaves (e.g., straw, plastic mulch).',
+      'Regularly scout plants for early symptoms.',
+      'Ensure balanced fertilization; avoid excessive nitrogen.'
+    ],
   };
 
-  // Handler for when a user selects a file
   const handleImageChange = (e) => {
-    e.preventDefault();
-    const reader = new FileReader();
     const file = e.target.files[0];
-
     if (file) {
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setImageFile(file);
         setImagePreviewUrl(reader.result);
+        setActiveDiagnosisSection('overview');
       };
       reader.readAsDataURL(file);
     }
   };
 
-  return (
-    <div className="bg-green-50 min-h-screen flex flex-col items-center p-4 sm:p-6 lg:p-8">
-      {/* Header */}
-      <div className="w-full max-w-4xl text-center mb-8">
-        <h1 className="text-3xl sm:text-4xl font-bold text-green-900">Crop Diagnosis</h1>
-        <p className="text-gray-600 mt-2">Upload a picture of the affected crop to get an instant analysis.</p>
+  const ConfidenceMeter = ({ score }) => (
+    <div>
+      <div className="flex justify-between items-center mb-1">
+        <span className="font-semibold text-gray-700">Confidence</span>
+        <span className="text-sm font-bold text-green-700">{score}%</span>
       </div>
+      <div className="w-full bg-gray-200 rounded-full h-2.5">
+        <div
+          className="bg-green-600 h-2.5 rounded-full transition-all duration-500"
+          style={{ width: `${score}%` }}
+        ></div>
+      </div>
+    </div>
+  );
 
-      <div className="w-full max-w-2xl">
-        {/* Image Upload Area */}
-        <input
-          type="file"
-          id="imageUpload"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="hidden" // Hides the default file input
-        />
-        
-        <label
-          htmlFor="imageUpload"
-          className="w-full h-80 flex justify-center items-center bg-white border-2 border-dashed border-green-500 rounded-2xl cursor-pointer hover:bg-green-100 transition-colors duration-300 shadow-sm overflow-hidden"
-        >
-          {imagePreviewUrl ? (
-            <img src={imagePreviewUrl} alt="Crop Preview" className="w-full h-full object-cover" />
-          ) : (
-            <div className="text-center text-gray-500 flex flex-col items-center">
-              <FiUploadCloud className="text-5xl text-green-500 mb-2" />
-              <h3 className="font-semibold text-lg">Click to Upload Image</h3>
-              <p className="text-sm">PNG, JPG, or JPEG</p>
+  const detailPanelVariants = {
+    hidden: { 
+      clipPath: 'polygon(0 0, 0 0, 0 100%, 0% 100%)',
+      opacity: 0 
+    },
+    visible: { 
+      clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+      opacity: 1,
+      transition: { duration: 0.6, ease: [0.25, 1, 0.5, 1] } 
+    },
+    exit: { 
+      clipPath: 'polygon(100% 0, 100% 0, 100% 100%, 100% 100%)',
+      opacity: 0,
+      transition: { duration: 0.4, ease: 'easeInOut' } 
+    }
+  };
+
+  const renderDetailPanel = () => {
+    switch (activeDiagnosisSection) {
+      case 'overview':
+        return (
+          <motion.div
+            key="overview-panel"
+            className="p-6 bg-white rounded-xl shadow-lg border border-gray-100"
+            variants={detailPanelVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <h3 className="text-xl font-bold text-gray-800 flex items-center mb-4">
+                <FiTarget className="text-2xl text-green-600 mr-3" /> Overview & Prediction
+            </h3>
+            <h4 className="text-2xl font-semibold text-green-700 mb-2">{cropData.prediction}</h4>
+            <p className="text-sm text-gray-500 mb-4">Disease ID: {cropData.diseaseCode}</p>
+            <p className="text-gray-600 mb-6">{cropData.description}</p>
+            <ConfidenceMeter score={cropData.confidenceScore} />
+            <div className="mt-6">
+                <h4 className="font-bold text-gray-800 mb-3">Key Symptoms:</h4>
+                <ul className="list-disc pl-5 text-gray-700 space-y-2">
+                    {cropData.symptoms.map((symptom, index) => (
+                        <li key={index}>{symptom}</li>
+                    ))}
+                </ul>
             </div>
-          )}
-        </label>
+          </motion.div>
+        );
+      case 'health':
+        return (
+          <motion.div
+            key="health-panel"
+            className="p-6 bg-white rounded-xl shadow-lg border border-gray-100"
+            variants={detailPanelVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <h3 className="text-xl font-bold text-gray-800 flex items-center mb-4">
+                <FiActivity className="text-2xl text-blue-600 mr-3" /> Health Indicators
+            </h3>
+            <p className="text-gray-600 mb-4">Detailed biological and observed health indicators:</p>
+            <ul className="space-y-3 text-gray-700">
+                <li className="flex items-center"><FiCheckCircle className="mr-3 text-blue-500" /> Plant Vigor: <span className="font-semibold ml-auto">Moderate</span></li>
+                <li className="flex items-center"><FiInfo className="mr-3 text-red-500" /> Leaf Discoloration: <span className="font-semibold ml-auto">Present on lower leaves</span></li>
+                <li className="flex items-center"><FiDroplet className="mr-3 text-green-500" /> Fungal Growth: <span className="font-semibold ml-auto">Visible under magnification</span></li>
+                <li className="flex items-center"><FiShield className="mr-3 text-purple-500" /> Disease Stage: <span className="font-semibold ml-auto">Early to Mid-stage</span></li>
+            </ul>
+             <p className="text-gray-500 italic mt-6 text-sm">
+                *Further analysis may require laboratory testing.
+            </p>
+          </motion.div>
+        );
+      case 'environment':
+        return (
+          <motion.div
+            key="environment-panel"
+            className="p-6 bg-white rounded-xl shadow-lg border border-gray-100"
+            variants={detailPanelVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <h3 className="text-xl font-bold text-gray-800 flex items-center mb-4">
+                <FiGlobe className="text-2xl text-yellow-600 mr-3" /> Environmental Conditions
+            </h3>
+            <p className="text-gray-600 mb-4">Current environmental factors influencing crop health:</p>
+            <ul className="space-y-3 text-gray-700">
+                <li className="flex items-center"><FiThermometer className="mr-3 text-red-500" /> Temperature: <span className="font-semibold ml-auto">{cropData.environmentalFactors.temperature}</span></li>
+                <li className="flex items-center"><FiDroplet className="mr-3 text-blue-500" /> Humidity: <span className="font-semibold ml-auto">{cropData.environmentalFactors.humidity}</span></li>
+                <li className="flex items-center"><FiInfo className="mr-3 text-green-500" /> Soil Moisture: <span className="font-semibold ml-auto">{cropData.environmentalFactors.soilMoisture}</span></li>
+                <li className="flex items-center"><FiSun className="mr-3 text-orange-500" /> Sunlight Exposure: <span className="font-semibold ml-auto">{cropData.environmentalFactors.sunlight}</span></li>
+                <li className="flex items-center"><FiActivity className="mr-3 text-lime-600" /> Soil pH: <span className="font-semibold ml-auto">{cropData.environmentalFactors.ph}</span></li>
+            </ul>
+             <p className="text-gray-500 italic mt-6 text-sm">
+                *Optimal conditions for this crop may vary slightly by variety and region.
+            </p>
+          </motion.div>
+        );
+      case 'solutions':
+        return (
+          <motion.div
+            key="solutions-panel"
+            className="p-6 bg-white rounded-xl shadow-lg border border-gray-100"
+            variants={detailPanelVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <h3 className="text-xl font-bold text-gray-800 flex items-center mb-4">
+                <FiTool className="text-2xl text-red-600 mr-3" /> Treatment & Prevention
+            </h3>
+            <div className="mb-6">
+                <h4 className="font-bold text-gray-800 mb-3 flex items-center"><FiCheckCircle className="text-blue-500 mr-2"/> Recommended Actions:</h4>
+                <ul className="space-y-3 text-gray-700">
+                    {cropData.recommendedActions.map((action, index) => (
+                        <li key={index} className="flex items-start">
+                            <FiCheckCircle className="text-blue-400 mt-1 mr-3 flex-shrink-0" />
+                            <span>{action}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <div>
+                <h4 className="font-bold text-gray-800 mb-3 flex items-center"><FiAlertTriangle className="text-amber-500 mr-2"/> Preventive Measures:</h4>
+                <ul className="space-y-3 text-gray-700">
+                    {cropData.preventiveMeasures.map((measure, index) => (
+                        <li key={index} className="flex items-start">
+                            <FiAlertTriangle className="text-amber-400 mt-1 mr-3 flex-shrink-0" />
+                            <span>{measure}</span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+          </motion.div>
+        );
+      default:
+        return null;
+    }
+  };
 
-        {/* Data Display Section - only shows after an image is uploaded */}
+  return (
+    <div className="bg-slate-50 min-h-screen p-4 sm:p-6 lg:p-8 font-sans">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">
+            Crop Health Diagnosis
+          </h1>
+          <p className="text-gray-500 mt-2">
+            Upload a clear image of the affected crop for an instant AI-powered analysis.
+          </p>
+        </div>
+        <div className="max-w-2xl mx-auto">
+          <input
+            type="file"
+            id="imageUpload"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
+          />
+          <label
+            htmlFor="imageUpload"
+            className="w-full h-80 flex justify-center items-center bg-white border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:border-green-500 hover:bg-green-50 transition-colors duration-300 shadow-sm"
+          >
+            {imagePreviewUrl ? (
+              <img src={imagePreviewUrl} alt="Crop Preview" className="w-full h-full object-contain p-2 rounded-2xl" />
+            ) : (
+              <div className="text-center text-gray-400 flex flex-col items-center">
+                <FiUploadCloud className="text-5xl mb-2" />
+                <h3 className="font-semibold text-lg text-gray-600">Click to Upload Image</h3>
+                <p className="text-sm">PNG or JPG format</p>
+              </div>
+            )}
+          </label>
+        </div>
         {imagePreviewUrl && (
-          <div className="mt-8 bg-white p-6 rounded-2xl shadow-lg animate-fade-in">
-            <h2 className="text-2xl font-bold text-green-900 border-b-2 border-gray-200 pb-3 mb-5">
-              Analysis Report
-            </h2>
+          <div className="mt-10 flex flex-col lg:flex-row gap-8 animate-fade-in-up">
             
-            <div className="space-y-4">
-              {/* Data Row */}
-              <div className="flex justify-between items-center">
-                <span className="font-bold text-gray-800">Disease Prediction:</span>
-                <span className="text-gray-700 bg-green-100 font-semibold px-3 py-1 rounded-full">{cropData.prediction}</span>
-              </div>
-
-              {/* Data Row */}
-              <div className="flex justify-between items-center">
-                <span className="font-bold text-gray-800">Confidence Score:</span>
-                <span className="text-gray-700">{cropData.confidenceScore}</span>
-              </div>
-
-              <hr className="my-4" />
-
-              {/* Environment Data Section */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-                <div>
-                  <span className="font-bold text-gray-800 block">Soil Moisture</span>
-                  <span className="text-gray-600">{cropData.soilMoisture}</span>
+            {/* --- MODIFIED CODE BLOCK --- */}
+            <div 
+              className="w-full lg:w-1/3 flex flex-col items-center p-6 bg-white rounded-xl shadow-md border border-gray-100"
+              style={{ perspective: '1000px' }} // 1. Added perspective for 3D context
+            >
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Diagnosis Details</h2>
+                {/* 2. Added a wrapper with fixed height to contain the wheel */}
+                <div className="w-full h-64 md:h-80 flex items-center justify-center">
+                  <DiagnosisWheel 
+                      onSectionClick={setActiveDiagnosisSection} 
+                      activeSection={activeDiagnosisSection} 
+                  />
                 </div>
-                <div>
-                  <span className="font-bold text-gray-800 block">Temperature</span>
-                  <span className="text-gray-600">{cropData.temperature}</span>
-                </div>
-                <div>
-                  <span className="font-bold text-gray-800 block">Humidity</span>
-                  <span className="text-gray-600">{cropData.humidity}</span>
-                </div>
-              </div>
-
-              {/* Recommendation Section */}
-              <div className="mt-5">
-                <span className="font-bold text-gray-800">Recommended Action:</span>
-                <p className="bg-green-50 text-green-800 p-4 rounded-lg mt-2 leading-relaxed">
-                  {cropData.recommendation}
+                <p className="text-sm text-gray-500 mt-4 text-center">
+                    Click on a section of the wheel for detailed insights.
                 </p>
-              </div>
+            </div>
+            {/* --- END OF MODIFIED CODE BLOCK --- */}
+            
+            <div className="w-full lg:w-2/3 min-h-[300px] relative">
+                <AnimatePresence mode="wait">
+                    {renderDetailPanel()}
+                </AnimatePresence>
             </div>
           </div>
         )}

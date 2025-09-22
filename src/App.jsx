@@ -12,6 +12,7 @@ function App() {
     <BrowserRouter>
       <div>
         <Navbar />
+        <br/><br/><br/><br/>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/diagnosis" element={<DiagnosisPage />} />
