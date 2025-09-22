@@ -12,37 +12,62 @@ const StarIcon = ({ className }) => (
   </svg>
 );
 
+// --- SVG Quote Icon Component ---
+const QuoteIcon = ({ className }) => (
+  <svg
+    className={className}
+    width="42"
+    height="34"
+    viewBox="0 0 42 34"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M15.4 34H0L10.5 0H21L15.4 34ZM36.4 34H21L31.5 0H42L36.4 34Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
+
 // --- Testimonial Card Component ---
 const TestimonialCard = ({ name, title, quote, image, rating, rotation }) => (
-  <div className="flex-shrink-0 w-[350px] md:w-[450px] bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-gray-700/50 mx-4 group">
-    <div className="flex flex-col h-full">
-      <div className="flex-grow">
-        <p className="text-gray-300 italic text-lg leading-relaxed">"{quote}"</p>
-      </div>
-      <div className="flex items-center mt-6">
-        <img
-          src={image}
-          alt={name}
-          className="w-16 h-16 rounded-full object-cover border-4 border-gray-700 shadow-md transition-transform duration-300 ease-in-out group-hover:scale-110"
-          style={{ transform: `rotate(${rotation}deg)` }}
-        />
-        <div className="ml-4">
-          <h4 className="text-xl font-bold text-white">{name}</h4>
-          <p className="text-gray-400">{title}</p>
-          <div className="flex mt-1">
-            {[...Array(5)].map((_, i) => (
-              <StarIcon
-                key={i}
-                className={`w-5 h-5 ${
-                  i < rating ? 'text-yellow-400' : 'text-gray-600'
-                }`}
-              />
-            ))}
-          </div>
+    <div className="flex-shrink-0 w-[350px] md:w-[450px] mx-4 group relative">
+        {/* Subtle glow effect on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-green-500/40 to-green-800/40 rounded-2xl transition-all duration-300 ease-in-out group-hover:opacity-100 opacity-0 -inset-1 blur-md"></div>
+        
+        {/* Gradient Border */}
+        <div className="relative p-0.5 rounded-2xl bg-gradient-to-br from-green-400/30 via-gray-800/50 to-green-800/30 h-full">
+            <div className="flex flex-col h-full bg-gray-900/90 backdrop-blur-xl p-8 rounded-[14px]">
+                <QuoteIcon className="absolute top-6 left-6 text-green-800/80 w-8 h-8" />
+                <div className="flex-grow pt-8">
+                    <p className="text-gray-300 text-lg leading-relaxed">"{quote}"</p>
+                </div>
+                <div className="flex items-center mt-6">
+                    <img
+                        src={image}
+                        alt={name}
+                        className="w-16 h-16 rounded-full object-cover border-4 border-green-400 shadow-lg transition-transform duration-300 ease-in-out group-hover:scale-110"
+                        style={{ transform: `rotate(${rotation}deg)` }}
+                    />
+                    <div className="ml-4">
+                        <h4 className="text-xl font-semibold text-white">{name}</h4>
+                        <p className="text-green-400 text-sm">{title}</p>
+                        <div className="flex mt-2">
+                            {[...Array(5)].map((_, i) => (
+                                <StarIcon
+                                    key={i}
+                                    className={`w-5 h-5 ${
+                                    i < rating ? 'text-yellow-400' : 'text-gray-700'
+                                    }`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 );
 
 
@@ -124,23 +149,9 @@ export default function App() {
         }
       `}</style>
 
-      <div className="bg-gray-900 font-sans text-white min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden">
-        {/* Background decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-full bg-grid-gray-700/[0.2] z-0"></div>
-        <div className="absolute -top-1/4 -left-1/4 w-1/2 h-1/2 bg-blue-500/10 blur-[150px] rounded-full z-0"></div>
-        <div className="absolute -bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-indigo-500/10 blur-[150px] rounded-full z-0"></div>
-        
-        <div className="z-10 text-center mb-12 px-4">
-             <h1 className="text-4xl md:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
-                Loved by Teams Everywhere
-            </h1>
-            <p className="mt-4 text-lg md:text-xl text-gray-400 max-w-3xl mx-auto">
-                Hear what our amazing users have to say about their experience. We're proud to power success stories across the globe.
-            </p>
-        </div>
-
+      <div className="font-sans w-full flex flex-col items-center justify-center relative overflow-hidden py-20">
         {/* The marquee container */}
-        <div className="relative w-full max-w-full overflow-hidden mask-image-linear-gradient-to-r from-transparent via-white to-transparent">
+        <div className="relative w-full max-w-full overflow-hidden" style={{ maskImage: 'linear-gradient(to right, transparent, white 10%, white 90%, transparent)' }}>
           <div className="flex w-max animate-marquee">
             {duplicatedTestimonials.map((testimonial, index) => (
               <TestimonialCard key={index} {...testimonial} />
@@ -151,3 +162,4 @@ export default function App() {
     </>
   );
 }
+
