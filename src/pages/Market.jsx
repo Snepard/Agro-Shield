@@ -6,7 +6,7 @@ import { ShoppingCart, Search, X, ChevronDown, Filter, Star, CheckSquare, Square
 
 // --- IMPORTANT: ADD YOUR PEXELS API KEY HERE ---
 // Get a free key from https://www.pexels.com/api/
-const PEXELS_API_KEY = '6F2tKZvOKoxSAaeZb6r1ypm4pKjvUDRgSh6eAApdMgnTYDTtkDW8rlrZ';
+const PEXELS_API_KEY = '';
 
 // --- BASE PRODUCT DATA (IMAGES WILL BE FETCHED DYNAMICALLY) ---
 const initialProductsData = [
