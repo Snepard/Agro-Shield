@@ -1,28 +1,32 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import Navbar from './components/Navbar';
+// 1. Import your new layout component
+import MainLayout from './layouts/MainLayout';
+
+// 2. Navbar is no longer imported here, as the layout handles it
 import HomePage from './pages/Homepage';
 import DiagnosisPage from './pages/Diagnosis';
-import Market from './pages/Market'
-import Community from './pages/Community'
-
+import Market from './pages/Market';
+import Community from './pages/Community';
 
 function App() {
   return (
     <BrowserRouter>
-      <div>
-        <Navbar />
-        <br/><br/><br/><br/>
-        <Routes>
+      <Routes>
+        {/* 3. Routes that SHOULD have a navbar are nested inside MainLayout. */}
+        {/* MainLayout will render the Navbar and then the specific page. */}
+        <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
-                    <Route path="/community" element={<Community />} />
-
           <Route path="/diagnosis" element={<DiagnosisPage />} />
-                    <Route path="/market" element={<Market />} />
+          <Route path="/market" element={<Market />} />
+          {/* Add any other future routes that need a navbar here */}
+        </Route>
 
-        </Routes>
-      </div>
+        {/* 4. The route that SHOULD NOT have a navbar is a standalone route. */}
+        {/* This will render only the Community component. */}
+        <Route path="/community" element={<Community />} />
+      </Routes>
     </BrowserRouter>
   );
 }
