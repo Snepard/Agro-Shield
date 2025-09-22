@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import HomePage from './pages/Homepage';
 import DiagnosisPage from './pages/Diagnosis';
+import Market from './pages/Market'
+
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/diagnosis" element={<DiagnosisPage />} />
+                    <Route path="/market" element={<Market />} />
+
         </Routes>
       </div>
     </BrowserRouter>
